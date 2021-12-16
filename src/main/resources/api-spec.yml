@@ -130,6 +130,11 @@ definitions:
     request-save-employee:
        allOf: 
         - $ref: '#/definitions/model-employee'
+        - type: object
+          properties:
+            employementTermsId:
+              type: integer
+              format: int32
     response-employee:
       allOf:
         - $ref: '#/definitions/response-base'

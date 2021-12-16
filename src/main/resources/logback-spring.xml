@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PATH" value="/logs" />
+    <property name="LOG_FILENAME" value="com.workmotion.ems" />
+    <property name="LOG_MAX_FILE_SIZE" value="70MB" />
+    <property name="LOG_MAX_HISTORY" value="10" />
+    <property name="LOG_TOTAL_SIZE_CAP" value="500MB" />
+    
+    <appender name="com.workmotion.ems.default.console.appender" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+        <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} | %X{UUID} | %-5level | %logger.%msg%n</Pattern>
+      </encoder>
+    </appender>
+
+    <springProfile name="dev">
+        <root level="debug">
+           <appender-ref ref="com.workmotion.ems.default.console.appender" />
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <root level="info">
+            <appender-ref ref="com.workmotion.ems.default.file.appender" />
+        </root>
+    </springProfile>
+
+</configuration>
