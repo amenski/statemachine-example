@@ -3,6 +3,7 @@ package com.workmotion.ems.workflow;
 public enum WorkFlowEvents {
     ADD, 
     IN_CHECK, 
+    APPROVE_TO_IN_CHECK,
     APPROVE, 
     ACTIVATE, 
     SECURITY_CHECK_START,

@@ -24,33 +24,36 @@ public class WorkflowStateMachineConfiguration extends StateMachineConfigurerAda
     @Override
     public void configure(StateMachineStateConfigurer<WorkFlowStates, WorkFlowEvents> states) throws Exception {
         states
-                .withStates()
-                .initial(WorkFlowStates.ADDED)
-                .fork(WorkFlowStates.IN_CHECK)
-                .join(WorkFlowStates.APPROVED)
-                .end(WorkFlowStates.ACTIVE)
-                .and()
-                .withStates()
-                    .parent(WorkFlowStates.IN_CHECK)
-                    .initial(WorkFlowStates.SECURITY_CHECK_STARTED)
-                    .end(WorkFlowStates.SECURITY_CHECK_FINISHED)
-                .and()
-                .withStates()
-                    .parent(WorkFlowStates.IN_CHECK)
-                    .initial(WorkFlowStates.WORK_PERMIT_CHECK_STARTED)
-                    .end(WorkFlowStates.WORK_PERMIT_CHECK_FINISHED);
+            .withStates()
+            .initial(WorkFlowStates.ADDED)
+            .fork(WorkFlowStates.IN_CHECK)
+            .join(WorkFlowStates.APPROVED)
+            .end(WorkFlowStates.ACTIVE)
+            .and()
+            .withStates()
+                .parent(WorkFlowStates.IN_CHECK)
+                .initial(WorkFlowStates.SECURITY_CHECK_STARTED)
+                .end(WorkFlowStates.SECURITY_CHECK_FINISHED)
+            .and()
+            .withStates()
+                .parent(WorkFlowStates.IN_CHECK)
+                .initial(WorkFlowStates.WORK_PERMIT_CHECK_STARTED)
+                .end(WorkFlowStates.WORK_PERMIT_CHECK_FINISHED);
     }
 
     @Override
     public void configure(StateMachineTransitionConfigurer<WorkFlowStates, WorkFlowEvents> transitions) throws Exception {
         transitions.withExternal()
-                .source(WorkFlowStates.ADDED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.IN_CHECK)
+                    .source(WorkFlowStates.ADDED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.IN_CHECK)
                 .and()
                 .withExternal()
                     .source(WorkFlowStates.SECURITY_CHECK_STARTED).target(WorkFlowStates.SECURITY_CHECK_FINISHED).event(WorkFlowEvents.SECURITY_CHECK_FINISH)
                 .and()
                 .withExternal()
                     .source(WorkFlowStates.WORK_PERMIT_CHECK_STARTED).target(WorkFlowStates.WORK_PERMIT_CHECK_FINISHED).event(WorkFlowEvents.WORK_PERMIT_CHECK_FINISH)
+                .and()
+                .withExternal()
+                    .source(WorkFlowStates.APPROVED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.APPROVE_TO_IN_CHECK) // an action?
                 .and()
                 .withFork()
                     .source(WorkFlowStates.IN_CHECK)
