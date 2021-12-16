@@ -1,0 +1,144 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title:  Employee Management System
+  description: ''
+host: 'localhost:8080'
+basePath: /
+schemes:
+  - http
+tags:
+  - name: Employee
+    description: 'Manage employee'
+paths:
+  '/v1/employee':
+      post:
+        operationId: addEmployee
+        summary: 'Register new employee'
+        tags:
+          - Employee
+        consumes:
+          - application/json
+        parameters:
+          - name: data
+            in: body
+            schema:
+              $ref: '#/definitions/request-save-employee'
+        responses:
+          '200':
+            description: ''
+            schema:
+              $ref: '#/definitions/response-base'
+          '500':
+            $ref: '#/responses/response-internal-server-error-500'
+      get:
+        operationId: getEmployee
+        summary: Get Employee
+        tags:
+        - Employee
+        produces:
+        - application/json
+        parameters:
+          - $ref: '#/parameters/employee-id-in-query'
+        responses:
+          '200':
+            description: ''
+            schema:
+              $ref: '#/definitions/response-employee'
+  '/v1/employee/{id}':
+      put:
+        operationId: updateEmployeeStatus
+        summary: 'Update status of an employees job application'
+        tags:
+        - Employee
+        consumes:
+        - application/json
+        parameters:
+          - $ref: '#/parameters/employee-id-in-path'
+          - name: status
+            in: body
+            schema:
+              type: string
+            required: true
+        responses:
+          '200':
+            description: ''
+            schema:
+              $ref: '#/definitions/response-base'
+          '500':
+            $ref: '#/responses/response-internal-server-error-500'
+parameters:
+  employee-id-in-query:
+    in: query
+    name: employeeId
+    type: string
+    required: true
+  employee-id-in-path:
+    in: path
+    name: id
+    type: integer
+    format: int32
+    required: true
+definitions:
+    response-base:
+      type: object
+      properties:
+        success:
+          type: boolean
+        resultCode:
+          type: integer
+          format: int32
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+        transactionId:
+          type: string
+        type:
+          type: string
+      discriminator: type
+      required:
+        - success
+        - resultCode
+    model-employee:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dob:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum: 
+          - F
+          - M
+        occupation:
+          type: string
+        passportNumber:
+          type: string
+      required:
+        - firstName
+        - lastName
+    request-save-employee:
+       allOf: 
+        - $ref: '#/definitions/model-employee'
+    response-employee:
+      allOf:
+        - $ref: '#/definitions/response-base'
+        - type: object
+          properties:
+            returnValue:
+              $ref: '#/definitions/model-employee'
+responses:
+    response-internal-server-error-500:
+      description: Internal Server error
+      schema:
+        $ref: '#/definitions/response-base'
