@@ -1,20 +1,27 @@
 package com.workmotion.ems.workflow;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.statemachine.config.EnableStateMachine;
+import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.StateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
+import org.springframework.statemachine.data.jpa.JpaPersistingStateMachineInterceptor;
 
+import lombok.RequiredArgsConstructor;
 
 @Configuration
-@EnableStateMachine
+@RequiredArgsConstructor
+@EnableStateMachineFactory
 public class WorkflowStateMachineConfiguration extends StateMachineConfigurerAdapter<WorkFlowStates, WorkFlowEvents> {
 
+    private final JpaPersistingStateMachineInterceptor<WorkFlowStates, WorkFlowEvents, String> persister;
     @Override
     public void configure(StateMachineConfigurationConfigurer<WorkFlowStates, WorkFlowEvents> config)
             throws Exception {
+        config
+            .withPersistence()
+                .runtimePersister(persister);
         config
             .withConfiguration()
             .autoStartup(true)
@@ -44,16 +51,16 @@ public class WorkflowStateMachineConfiguration extends StateMachineConfigurerAda
     @Override
     public void configure(StateMachineTransitionConfigurer<WorkFlowStates, WorkFlowEvents> transitions) throws Exception {
         transitions.withExternal()
-                    .source(WorkFlowStates.ADDED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.IN_CHECK)
+                    .source(WorkFlowStates.ADDED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.ADDED_TO_IN_CHECK)
+                 .and()
+                .withExternal()
+                    .source(WorkFlowStates.SECURITY_CHECK_STARTED).target(WorkFlowStates.SECURITY_CHECK_FINISHED).event(WorkFlowEvents.SECURITY_CHECK_STARTED_TO_SECURITY_CHECK_FINISHED)
                 .and()
                 .withExternal()
-                    .source(WorkFlowStates.SECURITY_CHECK_STARTED).target(WorkFlowStates.SECURITY_CHECK_FINISHED).event(WorkFlowEvents.SECURITY_CHECK_FINISH)
+                    .source(WorkFlowStates.WORK_PERMIT_CHECK_STARTED).target(WorkFlowStates.WORK_PERMIT_CHECK_FINISHED).event(WorkFlowEvents.WORK_PERMIT_CHECK_STARTED_TO_WORK_PERMIT_CHECK_FINISHED)
                 .and()
                 .withExternal()
-                    .source(WorkFlowStates.WORK_PERMIT_CHECK_STARTED).target(WorkFlowStates.WORK_PERMIT_CHECK_FINISHED).event(WorkFlowEvents.WORK_PERMIT_CHECK_FINISH)
-                .and()
-                .withExternal()
-                    .source(WorkFlowStates.APPROVED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.APPROVE_TO_IN_CHECK) // an action?
+                    .source(WorkFlowStates.APPROVED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.APPROVED_TO_IN_CHECK)
                 .and()
                 .withFork()
                     .source(WorkFlowStates.IN_CHECK)

@@ -51,16 +51,32 @@ public class EmployeeController  extends ResponseHandler implements EmployeeApi 
     }
 
     @Override
+    public ResponseEntity<ResponseBase> updateEmployeeStatus(
+            @ApiParam(value = "",required=true) @PathVariable("id") Integer id,
+            @ApiParam(value = "" ,required=true )  @Valid @RequestBody String status) {
+        
+        HttpStatus httpStatus = HttpStatus.OK;
+        Class<ResponseBase> responseClass = ResponseBase.class;
+        ResponseBase response = new ResponseBase();
+        
+        try {
+            employeeService.updateEmployeeStatus(id, status);
+            response = fillSuccessResponse(response);
+        } catch (EMSException e) {
+            log.error("Error creating employee. {}", e.toString());
+            httpStatus = e.getHttpCode();
+            response = fillFailResponseEMSException(responseClass, e);
+        } catch (Exception e) {
+            log.error("Error creating employee. {}", e.toString());
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            response = fillFailResponseGeneric(responseClass);
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+    
+    @Override
     public ResponseEntity<ResponseEmployee> getEmployee(
             @NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "employeeId", required = true) String employeeId) {
         return EmployeeApi.super.getEmployee(employeeId);
     }
-
-    @Override
-    public ResponseEntity<ResponseBase> updateEmployeeStatus(
-            @ApiParam(value = "",required=true) @PathVariable("id") Integer id,
-            @ApiParam(value = "" ,required=true )  @Valid @RequestBody String status) {
-        return EmployeeApi.super.updateEmployeeStatus(id, status);
-    }
-
 }

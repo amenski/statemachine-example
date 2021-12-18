@@ -15,6 +15,7 @@ public enum ExceptionEnums implements Supplier<EMSException> {
 
     VALIDATION_EXCEPTION(new EMSException(HttpStatus.BAD_REQUEST, 400001,"Something went wrong, please contact system administrator.")),
     INVALID_INPUT_EXCEPTION(new EMSException(HttpStatus.BAD_REQUEST, 400002,"Invalid input data.")),
+    STATE_TRANSITION_EXCEPTION(new EMSException(HttpStatus.BAD_REQUEST, 400003,"State transition not allowed.")),
 
     EMPLOYEE_NOT_FOUND(new EMSException(HttpStatus.NOT_FOUND, 404001, "Not found.")),
     CONTRACT_NOT_FOUND(new EMSException(HttpStatus.NOT_FOUND, 404002, "Contract not found.")),

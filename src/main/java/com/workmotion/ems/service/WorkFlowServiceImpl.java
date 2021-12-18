@@ -1,12 +1,42 @@
 package com.workmotion.ems.service;
 
-import com.workmotion.ems.util.EMSException;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.config.StateMachineFactory;
+import org.springframework.statemachine.service.StateMachineService;
+import org.springframework.stereotype.Service;
 
+import com.workmotion.ems.dal.model.Employee;
+import com.workmotion.ems.util.EMSException;
+import com.workmotion.ems.util.ExceptionEnums;
+import com.workmotion.ems.workflow.WorkFlowEvents;
+import com.workmotion.ems.workflow.WorkFlowStates;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class WorkFlowServiceImpl implements IWorkFlowService {
 
-    @Override
-    public boolean executeTransition(Object info, Integer toState)  throws EMSException {
-        return false;
-    }
+    private final StateMachineService<WorkFlowStates, WorkFlowEvents> stateMachineService;
 
+    @Override
+    public boolean executeTransition(Employee employee, WorkFlowStates state) throws EMSException {
+        final String methodName = "executeTransition()";
+        StateMachine<WorkFlowStates, WorkFlowEvents> sm = stateMachineService.acquireStateMachine(employee.getId().toString());
+        WorkFlowEvents event = WorkFlowEvents.get(employee.getStatus(), state.name());
+        if(event == null) {
+            log.error("{} Transition to state: {} not allowed.", methodName, state.name());
+            throw ExceptionEnums.STATE_TRANSITION_EXCEPTION.get();
+        }
+        
+        Message<WorkFlowEvents> message = MessageBuilder.withPayload(event)
+                .setHeader("employeeId", employee.getId())
+                .build();
+        
+        return sm.sendEvent(message);
+    }
 }

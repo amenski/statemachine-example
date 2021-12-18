@@ -26,6 +26,8 @@ public class EmployeeServiceImpl implements IEmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployementTermsRepository employementTermsRepository;
     
+    private final IWorkFlowService workFlowService;
+    
     @Override
     public void addEmployee(RequestSaveEmployee data) throws EMSException {
         log.debug("Creating new employee: {}", data);
@@ -58,11 +60,26 @@ public class EmployeeServiceImpl implements IEmployeeService {
     }
 
     @Override
+    public void updateEmployeeStatus(Integer id, String status) throws EMSException {
+        final String methodName = "updateEmployeeStatus()";
+        log.info("Updating empoyeeId:{} status to: {}", id, status);
+        try {
+            Employee employee = employeeRepository.findById(id).orElseThrow(ExceptionEnums.EMPLOYEE_NOT_FOUND);
+            boolean accepted = workFlowService.executeTransition(employee, WorkFlowStates.get(status));
+            if(accepted) {
+                // do return
+            }
+        } catch (EMSException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("{} Error updating employee status: {}", methodName, e.toString());
+            throw e;
+        }
+    }
+    
+    @Override
     public void getEmployee(String employeeId) throws EMSException {
     }
 
-    @Override
-    public void updateEmployeeStatus(Integer id, String status) throws EMSException {
-    }
 
 }
