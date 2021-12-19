@@ -145,7 +145,8 @@ definitions:
         educationRequirement:
           type: string
         annualSalary:
-          type: string
+          type: number
+          format: double
     request-save-employee:
        allOf: 
         - $ref: '#/definitions/model-employee'
