@@ -53,8 +53,8 @@ public class ApplicationConfiguration {
     }
     
     @Bean
-    public JpaPersistingStateMachineInterceptor<WorkFlowStates, WorkFlowEvents, String> jpaPersistingStateMachineInterceptor(
-            final JpaStateMachineRepository stateMachineRepository) {
+    public JpaPersistingStateMachineInterceptor<WorkFlowStates, WorkFlowEvents, String> 
+            jpaPersistingStateMachineInterceptor(final JpaStateMachineRepository stateMachineRepository) {
         return new JpaPersistingStateMachineInterceptor<>(stateMachineRepository);
     }
 }

@@ -71,7 +71,8 @@ parameters:
   employee-id-in-query:
     in: query
     name: employeeId
-    type: string
+    type: integer
+    format: int32
     required: true
   employee-id-in-path:
     in: path
@@ -124,17 +125,30 @@ definitions:
           type: string
         passportNumber:
           type: string
+        employementTerms:
+          $ref: '#/definitions/model-employement-terms'
       required:
         - firstName
         - lastName
+    model-employement-terms:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        jobTitle:
+          type: string
+        jobDescription:
+          type: string
+        skillRequirement:
+          type: string
+        educationRequirement:
+          type: string
+        annualSalary:
+          type: string
     request-save-employee:
        allOf: 
         - $ref: '#/definitions/model-employee'
-        - type: object
-          properties:
-            employementTermsId:
-              type: integer
-              format: int32
     response-employee:
       allOf:
         - $ref: '#/definitions/response-base'

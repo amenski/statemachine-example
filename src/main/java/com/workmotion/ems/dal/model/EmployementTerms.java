@@ -39,5 +39,4 @@ public class EmployementTerms implements Serializable {
 
     @Column(name = "annual_salary")
     private Double annualSalary;
-
 }

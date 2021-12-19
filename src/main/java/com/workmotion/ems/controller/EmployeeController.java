@@ -11,14 +11,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.workmotion.ems.service.IEmployeeService;
+import com.workmotion.ems.swagger.api.EmployeeApi;
+import com.workmotion.ems.swagger.model.ModelEmployee;
+import com.workmotion.ems.swagger.model.RequestSaveEmployee;
+import com.workmotion.ems.swagger.model.ResponseBase;
+import com.workmotion.ems.swagger.model.ResponseEmployee;
 import com.workmotion.ems.util.EMSException;
 import com.workmotion.ems.util.ResponseHandler;
 
 import io.swagger.annotations.ApiParam;
-import it.aman.ethjournal.swagger.api.EmployeeApi;
-import it.aman.ethjournal.swagger.model.RequestSaveEmployee;
-import it.aman.ethjournal.swagger.model.ResponseBase;
-import it.aman.ethjournal.swagger.model.ResponseEmployee;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,11 +64,11 @@ public class EmployeeController  extends ResponseHandler implements EmployeeApi 
             employeeService.updateEmployeeStatus(id, status);
             response = fillSuccessResponse(response);
         } catch (EMSException e) {
-            log.error("Error creating employee. {}", e.toString());
+            log.error("Error updating employee status. {}", e.toString());
             httpStatus = e.getHttpCode();
             response = fillFailResponseEMSException(responseClass, e);
         } catch (Exception e) {
-            log.error("Error creating employee. {}", e.toString());
+            log.error("Error updating employee status. {}", e.toString());
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
             response = fillFailResponseGeneric(responseClass);
         }
@@ -76,7 +77,22 @@ public class EmployeeController  extends ResponseHandler implements EmployeeApi 
     
     @Override
     public ResponseEntity<ResponseEmployee> getEmployee(
-            @NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "employeeId", required = true) String employeeId) {
-        return EmployeeApi.super.getEmployee(employeeId);
+            @NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "employeeId", required = true) Integer employeeId) {
+        HttpStatus httpStatus = HttpStatus.OK;
+        Class<ResponseEmployee> responseClass = ResponseEmployee.class;
+        ResponseEmployee response = new ResponseEmployee();
+        
+        try {
+            ModelEmployee model = employeeService.getEmployee(employeeId);
+            response = fillSuccessResponse(response.returnValue(model));
+        } catch (EMSException e) {
+            httpStatus = e.getHttpCode();
+            response = fillFailResponseEMSException(responseClass, e);
+        } catch (Exception e) {
+            log.error("Error getting employee. {}", e.toString());
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            response = fillFailResponseGeneric(responseClass);
+        }
+        return new ResponseEntity<>(response, httpStatus);
     }
 }

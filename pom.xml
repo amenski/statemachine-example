@@ -122,8 +122,8 @@
 							<generateModelDocumentation>false</generateModelDocumentation>
 							<generateModelTests>false</generateModelTests>
 							<generateSupportingFiles>true</generateSupportingFiles>
-							<modelPackage>it.aman.ethjournal.swagger.model</modelPackage>
-							<apiPackage>it.aman.ethjournal.swagger.api</apiPackage>
+							<modelPackage>com.workmotion.ems.swagger.model</modelPackage>
+							<apiPackage>com.workmotion.ems.swagger.api</apiPackage>
 							<configOptions>
 								<dateLibrary>java8</dateLibrary>
 								<sourceFolder>swagger</sourceFolder>

@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import it.aman.ethjournal.swagger.model.ResponseBase;
+import com.workmotion.ems.swagger.model.ResponseBase;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -55,13 +55,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(HttpStatus.NOT_FOUND, null, null, ex.getMessage(), null);
     }
 
-    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
-    public ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
-        String methodName = "handleMaxUploadSizeExceededException()";
-        log.error(Constants.PARAMETER_2, methodName, ex.getMessage());
-        return buildResponseEntity(HttpStatus.BAD_REQUEST, null, null, ex.getMessage(), null);
-    }
-
     @ExceptionHandler(value = MethodNotAllowedException.class)
     public ResponseEntity<Object> handleMethodNotAllowedExceptionException(MethodNotAllowedException ex,
             WebRequest request) {
@@ -84,6 +77,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         ? errors.stream().filter(Objects::nonNull).map(Objects::toString).collect(Collectors.toList())
                         : null);
 
-        return new ResponseEntity<>((Object) response, headers, status);
+        return new ResponseEntity<>(response, headers, status);
     }
 }

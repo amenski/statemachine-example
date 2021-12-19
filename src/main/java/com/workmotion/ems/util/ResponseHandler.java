@@ -2,7 +2,7 @@ package com.workmotion.ems.util;
 
 import java.util.Objects;
 
-import it.aman.ethjournal.swagger.model.ResponseBase;
+import com.workmotion.ems.swagger.model.ResponseBase;
 
 public class ResponseHandler {
     public <T extends ResponseBase> T fillSuccessResponse(T response) {
