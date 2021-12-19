@@ -9,7 +9,7 @@ public class ResponseHandler {
         Objects.requireNonNull(response);
         response.success(true);
         response.resultCode(Constants.SUCCESS);
-        response.message("");
+        response.message(null);
         response.errors(null);
 
         return response;
@@ -29,7 +29,7 @@ public class ResponseHandler {
         T res = getNewInstance(response);
         res.success(false);
         res.resultCode(e.getInternalCode());
-        res.message(e.getErrorMessage() != null ? e.getErrorMessage() : "");
+        res.message(e.getErrorMessage());
         res.errors(e.getErrors());
 
         return res;
@@ -39,7 +39,7 @@ public class ResponseHandler {
         T response = getNewInstance(response1);
         response.success(false);
         response.resultCode(ExceptionEnums.UNHANDLED_EXCEPTION.get().getInternalCode());
-        response.message(ExceptionEnums.UNHANDLED_EXCEPTION.get().getMessage());
+        response.message(ExceptionEnums.UNHANDLED_EXCEPTION.get().getErrorMessage());
         response.errors(null);
 
         return response;
