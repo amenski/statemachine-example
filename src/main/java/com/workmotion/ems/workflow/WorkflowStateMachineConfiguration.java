@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class WorkflowStateMachineConfiguration extends StateMachineConfigurerAdapter<WorkFlowStates, WorkFlowEvents> {
 
     private final JpaPersistingStateMachineInterceptor<WorkFlowStates, WorkFlowEvents, String> persister;
+    
     @Override
     public void configure(StateMachineConfigurationConfigurer<WorkFlowStates, WorkFlowEvents> config)
             throws Exception {
@@ -34,7 +35,8 @@ public class WorkflowStateMachineConfiguration extends StateMachineConfigurerAda
             .withStates()
             .initial(WorkFlowStates.ADDED)
             .fork(WorkFlowStates.IN_CHECK)
-            .join(WorkFlowStates.APPROVED)
+            .join(WorkFlowStates.JOIN)
+            .state(WorkFlowStates.APPROVED)
             .end(WorkFlowStates.ACTIVE)
             .and()
             .withStates()
@@ -51,16 +53,22 @@ public class WorkflowStateMachineConfiguration extends StateMachineConfigurerAda
     @Override
     public void configure(StateMachineTransitionConfigurer<WorkFlowStates, WorkFlowEvents> transitions) throws Exception {
         transitions.withExternal()
-                    .source(WorkFlowStates.ADDED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.ADDED_TO_IN_CHECK)
+                    .source(WorkFlowStates.ADDED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.IN_CHECK)
                  .and()
                 .withExternal()
-                    .source(WorkFlowStates.SECURITY_CHECK_STARTED).target(WorkFlowStates.SECURITY_CHECK_FINISHED).event(WorkFlowEvents.SECURITY_CHECK_STARTED_TO_SECURITY_CHECK_FINISHED)
+                    .source(WorkFlowStates.SECURITY_CHECK_STARTED).target(WorkFlowStates.SECURITY_CHECK_FINISHED).event(WorkFlowEvents.SECURITY_CHECK_FINISH)
                 .and()
                 .withExternal()
-                    .source(WorkFlowStates.WORK_PERMIT_CHECK_STARTED).target(WorkFlowStates.WORK_PERMIT_CHECK_FINISHED).event(WorkFlowEvents.WORK_PERMIT_CHECK_STARTED_TO_WORK_PERMIT_CHECK_FINISHED)
+                    .source(WorkFlowStates.WORK_PERMIT_CHECK_STARTED).target(WorkFlowStates.WORK_PERMIT_CHECK_FINISHED).event(WorkFlowEvents.WORK_PERMIT_CHECK_FINISH)
                 .and()
                 .withExternal()
-                    .source(WorkFlowStates.APPROVED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.APPROVED_TO_IN_CHECK)
+                    .source(WorkFlowStates.JOIN).target(WorkFlowStates.APPROVED)
+                 .and()
+                 .withExternal()
+                    .source(WorkFlowStates.APPROVED).target(WorkFlowStates.IN_CHECK).event(WorkFlowEvents.IN_CHECK)
+                .and()
+                .withExternal()
+                    .source(WorkFlowStates.APPROVED).target(WorkFlowStates.ACTIVE).event(WorkFlowEvents.ACTIVATE)
                 .and()
                 .withFork()
                     .source(WorkFlowStates.IN_CHECK)
@@ -70,6 +78,6 @@ public class WorkflowStateMachineConfiguration extends StateMachineConfigurerAda
                 .withJoin()
                     .source((WorkFlowStates.SECURITY_CHECK_FINISHED))
                     .source(WorkFlowStates.WORK_PERMIT_CHECK_FINISHED)
-                    .target(WorkFlowStates.APPROVED);
+                    .target(WorkFlowStates.JOIN);
     }
 }

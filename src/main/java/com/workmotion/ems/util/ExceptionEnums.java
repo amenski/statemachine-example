@@ -15,9 +15,9 @@ public enum ExceptionEnums implements Supplier<EMSException> {
 
     VALIDATION_EXCEPTION(new EMSException(HttpStatus.BAD_REQUEST, 400001,"Something went wrong, please contact system administrator.")),
     INVALID_INPUT_EXCEPTION(new EMSException(HttpStatus.BAD_REQUEST, 400002,"Invalid input data.")),
-    STATE_TRANSITION_EXCEPTION(new EMSException(HttpStatus.BAD_REQUEST, 400003,"State transition not allowed.")),
+    STATE_TRANSITION_EXCEPTION(new EMSException(HttpStatus.BAD_REQUEST, 400003, "Unable to change employee status.")),
 
-    EMPLOYEE_NOT_FOUND(new EMSException(HttpStatus.NOT_FOUND, 404001, "Not found.")),
+    EMPLOYEE_NOT_FOUND(new EMSException(HttpStatus.NOT_FOUND, 404001, "Employee not found.")),
     CONTRACT_NOT_FOUND(new EMSException(HttpStatus.NOT_FOUND, 404002, "Contract not found.")),
 
     UNHANDLED_EXCEPTION(new EMSException(HttpStatus.INTERNAL_SERVER_ERROR, 500001, "Unhandled exception has occured."));
@@ -25,11 +25,6 @@ public enum ExceptionEnums implements Supplier<EMSException> {
     /// ====== ======///
     private EMSException e;
 
-    /**
-     * needed to put exceptions inside the enums
-     * 
-     * @param ex
-     */
     private ExceptionEnums(EMSException ex) {
         this.e = ex;
     }

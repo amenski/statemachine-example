@@ -12,12 +12,12 @@ public class WorkFlowStateMachineListener extends StateMachineListenerAdapter<Wo
     @Override
     public void stateChanged(State<WorkFlowStates, WorkFlowEvents> from, State<WorkFlowStates, WorkFlowEvents> to) {
         super.stateChanged(from, to);
-        log.info("--------------------- State change successfull --------------------- {}", to.getId().name());
+        log.info("State changed to: {}", to.getId().name());
     }
 
     @Override
     public void eventNotAccepted(Message<WorkFlowEvents> event) {
         super.eventNotAccepted(event);
-        log.info("====================== State change failed ==================");
+        log.info("State change failed: {}", event.getPayload());
     }
 }

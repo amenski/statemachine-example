@@ -3,7 +3,8 @@ package com.workmotion.ems.workflow;
 public enum WorkFlowStates {
     ADDED, 
     IN_CHECK, 
-    APPROVED, 
+    APPROVED,
+    JOIN,
     ACTIVE, 
     SECURITY_CHECK_STARTED,
     SECURITY_CHECK_FINISHED, 

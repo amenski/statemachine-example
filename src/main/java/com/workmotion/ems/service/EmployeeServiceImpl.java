@@ -60,14 +60,15 @@ public class EmployeeServiceImpl implements IEmployeeService {
     }
 
     @Override
-    public void updateEmployeeStatus(Integer id, String status) throws EMSException {
+    public void updateEmployeeStatus(Integer id, String event) throws EMSException {
         final String methodName = "updateEmployeeStatus()";
-        log.info("Updating empoyeeId:{} status to: {}", id, status);
+        log.info("Updating empoyeeId:{} status to: {}", id, event);
         try {
             Employee employee = employeeRepository.findById(id).orElseThrow(ExceptionEnums.EMPLOYEE_NOT_FOUND);
-            boolean accepted = workFlowService.executeTransition(employee, WorkFlowStates.get(status));
-            if(accepted) {
-                // do return
+            boolean accepted = workFlowService.executeTransition(employee, event);
+            if(!accepted) {
+                log.error("{} Unkown event: {}.", methodName, event);
+                throw ExceptionEnums.STATE_TRANSITION_EXCEPTION.get();
             }
         } catch (EMSException e) {
             throw e;

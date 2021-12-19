@@ -31,11 +31,11 @@ public class WorkFlowStateMachineInterceptor extends StateMachineInterceptorAdap
             Transition<WorkFlowStates, WorkFlowEvents> transition,
             StateMachine<WorkFlowStates, WorkFlowEvents> stateMachine,
             StateMachine<WorkFlowStates, WorkFlowEvents> rootStateMachine) {
-
+        
         Employee employee = employeeRepository.findById(Integer.valueOf(rootStateMachine.getId())).orElse(null);
 
         if (employee == null) {
-            log.error("Employee data not found, unable to update status.");
+            log.error("Employee not found, unable to update status.");
             return;
         }
 

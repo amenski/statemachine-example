@@ -25,22 +25,18 @@ public class WorkFlowServiceImpl implements IWorkFlowService {
     private final WorkFlowStateMachineInterceptor stateMachineInterceptor;
 
     @Override
-    public boolean executeTransition(Employee employee, WorkFlowStates state) throws EMSException {
+    public boolean executeTransition(Employee employee, String event) throws EMSException {
         final String methodName = "executeTransition()";
         StateMachine<WorkFlowStates, WorkFlowEvents> sm = stateMachineService.acquireStateMachine(employee.getId().toString());
         
-        WorkFlowEvents event = null;
-        for(WorkFlowStates st : sm.getState().getIds()) {
-            event = WorkFlowEvents.get(st.name(), state.name());
-            if(event != null) break;
+        WorkFlowEvents workflowEvent = WorkFlowEvents.get(event);
+        
+        if(workflowEvent == null) {
+            log.error("{} Unkown event: {}.", methodName, event);
+            throw ExceptionEnums.STATE_TRANSITION_EXCEPTION.get().errorMessage("Unkown event name.");
         }
         
-        if(event == null) {
-            log.error("{} Transition to state: {} not allowed.", methodName, state.name());
-            throw ExceptionEnums.STATE_TRANSITION_EXCEPTION.get();
-        }
-        
-        Message<WorkFlowEvents> message = MessageBuilder.withPayload(event)
+        Message<WorkFlowEvents> message = MessageBuilder.withPayload(workflowEvent)
                 .setHeader("employeeId", employee.getId())
                 .build();
         
