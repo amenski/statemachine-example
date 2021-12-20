@@ -2,15 +2,26 @@ package com.workmotion.ems.util;
 
 import java.util.Objects;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Component;
+
 import com.workmotion.ems.swagger.model.ResponseBase;
 
-public class ResponseHandler {
+@Component
+public abstract class ResponseHandler {
+    
+    @Resource
+    protected HttpServletResponse servletResponse;
+    
     public <T extends ResponseBase> T fillSuccessResponse(T response) {
         Objects.requireNonNull(response);
         response.success(true);
         response.resultCode(Constants.SUCCESS);
         response.message(null);
         response.errors(null);
+        response.transactionId(servletResponse.getHeader(Constants.TRANSACTION_ID_KEY));
 
         return response;
     }
@@ -21,6 +32,7 @@ public class ResponseHandler {
         resp.resultCode(Constants.SUCCESS);
         resp.message(message);
         resp.errors(null);
+        resp.transactionId(servletResponse.getHeader(Constants.TRANSACTION_ID_KEY));
 
         return resp;
     }
@@ -31,7 +43,8 @@ public class ResponseHandler {
         res.resultCode(e.getInternalCode());
         res.message(e.getErrorMessage());
         res.errors(e.getErrors());
-
+        res.transactionId(servletResponse.getHeader(Constants.TRANSACTION_ID_KEY));
+        
         return res;
     }
 
@@ -41,6 +54,7 @@ public class ResponseHandler {
         response.resultCode(ExceptionEnums.UNHANDLED_EXCEPTION.get().getInternalCode());
         response.message(ExceptionEnums.UNHANDLED_EXCEPTION.get().getErrorMessage());
         response.errors(null);
+        response.transactionId(servletResponse.getHeader(Constants.TRANSACTION_ID_KEY));
 
         return response;
     }

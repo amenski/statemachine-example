@@ -1,9 +1,11 @@
 package com.workmotion.ems.controller;
 
 import static org.mockito.Mockito.doAnswer;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -44,14 +47,17 @@ class EmployeeControllerTest {
 
     @Spy
     private ModelMapper mapper;
+    
+    @Mock
+    HttpServletResponse servletResponse;
 
     private ObjectMapper objMapper;
 
     @InjectMocks
     private EmployeeController controller;
 
-    private static final String ADD_EMPLOYEE_URL = "/v1/employee";
-    private static final String GET_EMPLOYEE_URL = "/v1/employee?employeeId=%s";
+    private static final String ADD_EMPLOYEE_URL    = "/v1/employee";
+    private static final String GET_EMPLOYEE_URL    = "/v1/employee?employeeId=%s";
     private static final String UPDATE_CUSTOMER_URL = "/v1/employee/%s";
 
     private JacksonTester<RequestSaveEmployee> requestSaveEmployee;
@@ -61,6 +67,7 @@ class EmployeeControllerTest {
         objMapper = new ObjectMapper();
         objMapper.findAndRegisterModules();
         JacksonTester.initFields(this, objMapper);
+        ReflectionTestUtils.setField(controller, "servletResponse", servletResponse);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -76,9 +83,10 @@ class EmployeeControllerTest {
                 throw ExceptionEnums.EMPLOYEE_NOT_FOUND.get();
             }
         }).when(employeeService).addEmployee(ArgumentMatchers.any(RequestSaveEmployee.class));
-
+        
         MockHttpServletResponse response = mockMvc.perform(post(ADD_EMPLOYEE_URL)
-                .contentType(MediaType.APPLICATION_JSON).content(requestSaveEmployee.write(request).getJson()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestSaveEmployee.write(request).getJson()))
                 .andReturn().getResponse();
 
         ResponseBase responseContent = objMapper.readValue(response.getContentAsString(), ResponseBase.class);
@@ -99,9 +107,10 @@ class EmployeeControllerTest {
                 throw new Exception();
             }
         }).when(employeeService).addEmployee(ArgumentMatchers.any(RequestSaveEmployee.class));
-
+        
         MockHttpServletResponse response = mockMvc.perform(post(ADD_EMPLOYEE_URL)
-                .contentType(MediaType.APPLICATION_JSON).content(requestSaveEmployee.write(request).getJson()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestSaveEmployee.write(request).getJson()))
                 .andReturn().getResponse();
 
         ResponseBase responseContent = objMapper.readValue(response.getContentAsString(), ResponseBase.class);
@@ -119,7 +128,7 @@ class EmployeeControllerTest {
         MockHttpServletResponse response = mockMvc.perform(post(ADD_EMPLOYEE_URL)
                 .contentType(MediaType.APPLICATION_JSON).content(requestSaveEmployee.write(request).getJson()))
                 .andReturn().getResponse();
-
+        
         ResponseBase responseContent = objMapper.readValue(response.getContentAsString(), ResponseBase.class);
 
         // VALIDATE
@@ -138,7 +147,7 @@ class EmployeeControllerTest {
                 throw ExceptionEnums.EMPLOYEE_NOT_FOUND.get();
             }
         }).when(employeeService).updateEmployeeStatus(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString());
-
+        
         MockHttpServletResponse response = mockMvc.perform(put(String.format(UPDATE_CUSTOMER_URL, 1))
                 .contentType(MediaType.APPLICATION_JSON).content(requestSaveEmployee.write(request).getJson()))
                 .andReturn().getResponse();
@@ -161,7 +170,7 @@ class EmployeeControllerTest {
                 throw new Exception();
             }
         }).when(employeeService).updateEmployeeStatus(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString());
-
+        
         MockHttpServletResponse response = mockMvc.perform(put(String.format(UPDATE_CUSTOMER_URL, 1))
                 .contentType(MediaType.APPLICATION_JSON).content(requestSaveEmployee.write(request).getJson()))
                 .andReturn().getResponse();
@@ -176,7 +185,8 @@ class EmployeeControllerTest {
     void updateEmployeeStatus_Success() throws Exception {
         // GIVEN
         RequestSaveEmployee request = random.nextObject(RequestSaveEmployee.class);
-
+        
+        
         // MOCK
         MockHttpServletResponse response = mockMvc.perform(put(String.format(UPDATE_CUSTOMER_URL, 1))
                 .contentType(MediaType.APPLICATION_JSON).content(requestSaveEmployee.write(request).getJson()))
@@ -197,7 +207,7 @@ class EmployeeControllerTest {
                 throw ExceptionEnums.EMPLOYEE_NOT_FOUND.get();
             }
         }).when(employeeService).getEmployee(ArgumentMatchers.anyInt());
-
+        
         MockHttpServletResponse response = mockMvc.perform(get(String.format(GET_EMPLOYEE_URL, 1))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
@@ -220,7 +230,7 @@ class EmployeeControllerTest {
                 throw new Exception("Test.");
             }
         }).when(employeeService).getEmployee(ArgumentMatchers.anyInt());
-
+        
         MockHttpServletResponse response = mockMvc.perform(get(String.format(GET_EMPLOYEE_URL, 1))
                 .contentType(MediaType.APPLICATION_JSON).content(requestSaveEmployee.write(request).getJson()))
                 .andReturn().getResponse();
@@ -240,7 +250,7 @@ class EmployeeControllerTest {
         MockHttpServletResponse response = mockMvc.perform(get(String.format(GET_EMPLOYEE_URL, 1))
                 .contentType(MediaType.APPLICATION_JSON).content(requestSaveEmployee.write(request).getJson()))
                 .andReturn().getResponse();
-
+        
         ResponseBase responseContent = objMapper.readValue(response.getContentAsString(), ResponseBase.class);
 
         // VALIDATE

@@ -1,6 +1,7 @@
 package com.workmotion.ems.util;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,7 +28,7 @@ public class LogFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
+        MDC.put(Constants.UUID_KEY, UUID.randomUUID().toString());
         HttpServletResponse customResponse = (HttpServletResponse) response;
         CustomResponseWrapper customWrapper = new CustomResponseWrapper(customResponse);
         customWrapper.addHeader(Constants.TRANSACTION_ID_KEY, MDC.get(Constants.UUID_KEY));

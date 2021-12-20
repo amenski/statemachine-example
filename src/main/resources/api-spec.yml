@@ -121,10 +121,12 @@ definitions:
           enum: 
           - F
           - M
-        occupation:
-          type: string
         passportNumber:
           type: string
+        status:
+          type: array
+          items:
+            type: string
         employementTerms:
           $ref: '#/definitions/model-employement-terms'
       required:
