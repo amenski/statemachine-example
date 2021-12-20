@@ -43,8 +43,6 @@ public class Employee implements Serializable {
     
     private String gender;
     
-    private String occupation;
-    
     @Column(name = "passport_number")
     private String passportNumber;
     
