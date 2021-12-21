@@ -24,6 +24,8 @@ Examples of permitted transition:
 Transition from IN_CHECK state to APPROVED state happens automatically when the complete state is (IN_CHECK, SECURITY_CHECK_FINISHED, WORK_PERMIT_CHECK_FINISHED).
 Transition from IN_CHECK state to APPROVED without meeting the condition above is not allowed.
 
+![state diagram](statemachine.png?raw=true "Statemachine diagram")
+
 **How to run**
 Note: `EmployeeTerms` table is populated automatically from a script in the resources forlder. This mock table serves as a table to hold contract and position details.
 There are 2 modes to run it.
