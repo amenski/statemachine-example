@@ -1,3 +1,14 @@
+
+ A simple spring-boot and spring-statemachine rest-api example that handles the process involved in hiring an employee (with the statemachine utilizing different `regions`). 
+ 
+ You can use regions to define nested states and transitions. In UML state machine diagrams, a region is a container inside a state that can hold states, pseudostates, and transitions, which you can add to state machines or states. Regions allow you to provide more detail about the internal transitions of a particular state.
+
+After every execution, states are saved in the database for later usage.
+
+Note: 
+This is a sample, not a complete project to handle all the processes involved.
+
+### Scenario:
 The allowed state transitions are:
 
 ADDED -> IN-CHECK <-> APPROVED -> ACTIVE
